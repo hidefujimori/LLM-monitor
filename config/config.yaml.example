@@ -1,5 +1,5 @@
 splunk:
-  hec_url: "http://192.168.1.100:8088/services/collector/event"
+  hec_url: "http://172.26.10.100:8088/services/collector/event"
   hec_token: "YOUR-HEC-TOKEN-HERE"
   index: "llm_monitor"
   source: "llm-monitor"
@@ -7,7 +7,7 @@ splunk:
   verify_ssl: false
 
 ollama:
-  base_url: "http://localhost:11434"
+  base_url: "http://172.26.1.20:11434"
   timeout: 10
 
 collection:
