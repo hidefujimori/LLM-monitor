@@ -1,0 +1,19 @@
+splunk:
+  hec_url: "http://192.168.1.100:8088/services/collector/event"
+  hec_token: "YOUR-HEC-TOKEN-HERE"
+  index: "llm_monitor"
+  source: "llm-monitor"
+  sourcetype: "llm:metrics"
+  verify_ssl: false
+
+ollama:
+  base_url: "http://localhost:11434"
+  timeout: 10
+
+collection:
+  interval_seconds: 60
+  gpu_enabled: true
+
+logging:
+  level: "INFO"
+  file: "logs/llm-monitor.log"

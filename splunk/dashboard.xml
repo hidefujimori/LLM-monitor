@@ -1,0 +1,222 @@
+<dashboard version="1.1" theme="dark">
+  <label>LLM Monitor - Ollama &amp; GPU Dashboard</label>
+  <description>Real-time monitoring of Ollama LLM server and GPU resources</description>
+
+  <row>
+    <panel>
+      <title>Ollama Status</title>
+      <single>
+        <search>
+          <query>index=llm_monitor metric_type=ollama | head 1 | eval status_display=upper(status) | table status_display</query>
+          <earliest>-5m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="field">status_display</option>
+        <option name="colorMode">block</option>
+        <option name="rangeColors">["0x53a051","0xdc4e41"]</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Ollama Version</title>
+      <single>
+        <search>
+          <query>index=llm_monitor metric_type=ollama | head 1 | table version</query>
+          <earliest>-5m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="field">version</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Loaded Models</title>
+      <single>
+        <search>
+          <query>index=llm_monitor metric_type=ollama | head 1 | table model_count</query>
+          <earliest>-5m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="field">model_count</option>
+        <option name="unit">models</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Running Models</title>
+      <single>
+        <search>
+          <query>index=llm_monitor metric_type=ollama | head 1 | table running_model_count</query>
+          <earliest>-5m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="field">running_model_count</option>
+        <option name="unit">models</option>
+      </single>
+    </panel>
+  </row>
+
+  <row>
+    <panel>
+      <title>GPU Count</title>
+      <single>
+        <search>
+          <query>index=llm_monitor metric_type=gpu | head 1 | table gpu_count</query>
+          <earliest>-5m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="field">gpu_count</option>
+        <option name="unit">GPUs</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Total VRAM</title>
+      <single>
+        <search>
+          <query>index=llm_monitor metric_type=gpu | head 1 | eval total_vram_gb=round(total_vram_mb/1024,1) | table total_vram_gb</query>
+          <earliest>-5m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="field">total_vram_gb</option>
+        <option name="unit">GB</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Used VRAM</title>
+      <single>
+        <search>
+          <query>index=llm_monitor metric_type=gpu | head 1 | eval used_vram_gb=round(used_vram_mb/1024,1) | table used_vram_gb</query>
+          <earliest>-5m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="field">used_vram_gb</option>
+        <option name="unit">GB</option>
+      </single>
+    </panel>
+
+    <panel>
+      <title>Free VRAM</title>
+      <single>
+        <search>
+          <query>index=llm_monitor metric_type=gpu | head 1 | eval free_vram_gb=round(free_vram_mb/1024,1) | table free_vram_gb</query>
+          <earliest>-5m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="field">free_vram_gb</option>
+        <option name="unit">GB</option>
+      </single>
+    </panel>
+  </row>
+
+  <row>
+    <panel>
+      <title>GPU Utilization (%) - Over Time</title>
+      <chart>
+        <search>
+          <query>index=llm_monitor metric_type=gpu | mvexpand gpus | spath input=gpus | timechart avg(gpu_utilization_pct) by name span=1m</query>
+          <earliest>-1h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.axisTitleX.text">Time</option>
+        <option name="charting.axisTitleY.text">Utilization (%)</option>
+        <option name="charting.axisY.maximumNumber">100</option>
+        <option name="charting.axisY.minimumNumber">0</option>
+      </chart>
+    </panel>
+
+    <panel>
+      <title>GPU Temperature (°C) - Over Time</title>
+      <chart>
+        <search>
+          <query>index=llm_monitor metric_type=gpu | mvexpand gpus | spath input=gpus | timechart avg(temperature_c) by name span=1m</query>
+          <earliest>-1h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.axisTitleX.text">Time</option>
+        <option name="charting.axisTitleY.text">Temperature (°C)</option>
+      </chart>
+    </panel>
+  </row>
+
+  <row>
+    <panel>
+      <title>VRAM Usage (MB) - Over Time</title>
+      <chart>
+        <search>
+          <query>index=llm_monitor metric_type=gpu | timechart avg(used_vram_mb) as "Used VRAM (MB)", avg(total_vram_mb) as "Total VRAM (MB)" span=1m</query>
+          <earliest>-1h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.chart">area</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.axisTitleX.text">Time</option>
+        <option name="charting.axisTitleY.text">VRAM (MB)</option>
+      </chart>
+    </panel>
+
+    <panel>
+      <title>GPU Power Draw (W) - Over Time</title>
+      <chart>
+        <search>
+          <query>index=llm_monitor metric_type=gpu | mvexpand gpus | spath input=gpus | timechart avg(power_draw_w) by name span=1m</query>
+          <earliest>-1h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.nullValueMode">connect</option>
+        <option name="charting.axisTitleX.text">Time</option>
+        <option name="charting.axisTitleY.text">Power (W)</option>
+      </chart>
+    </panel>
+  </row>
+
+  <row>
+    <panel>
+      <title>Current GPU Status</title>
+      <table>
+        <search>
+          <query>index=llm_monitor metric_type=gpu | head 1 | mvexpand gpus | spath input=gpus | table name, vendor, temperature_c, gpu_utilization_pct, memory_used_pct, memory_used_mb, memory_total_mb, power_draw_w, performance_state</query>
+          <earliest>-5m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+      </table>
+    </panel>
+  </row>
+
+  <row>
+    <panel>
+      <title>Ollama Models Installed</title>
+      <table>
+        <search>
+          <query>index=llm_monitor metric_type=ollama | head 1 | mvexpand models | spath input=models | table name, family, parameter_size, quantization, size_gb, modified_at</query>
+          <earliest>-5m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+      </table>
+    </panel>
+
+    <panel>
+      <title>Currently Running Models</title>
+      <table>
+        <search>
+          <query>index=llm_monitor metric_type=ollama running_model_count>0 | head 1 | mvexpand running_models | spath input=running_models | table name, size_vram_gb, expires_at</query>
+          <earliest>-5m</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+      </table>
+    </panel>
+  </row>
+
+</dashboard>
