@@ -17,3 +17,7 @@ collection:
 logging:
   level: "INFO"
   file: "logs/llm-monitor.log"
+
+retry_queue:
+  dir: "queue"
+  max_size_mb: 300

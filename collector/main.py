@@ -10,6 +10,7 @@ import yaml
 
 from gpu_collector import GPUCollector
 from ollama_collector import OllamaCollector
+from retry_queue import RetryQueue
 from splunk_hec import SplunkHEC
 
 running = True
@@ -23,13 +24,14 @@ def handle_signal(signum, frame):
 
 def setup_logging(level: str, log_file: str) -> None:
     os.makedirs(os.path.dirname(log_file), exist_ok=True)
-    log_level = getattr(logging, level.upper(), logging.INFO)
     handlers = [
         logging.StreamHandler(sys.stdout),
-        logging.handlers.RotatingFileHandler(log_file, maxBytes=10 * 1024 * 1024, backupCount=5),
+        logging.handlers.RotatingFileHandler(
+            log_file, maxBytes=10 * 1024 * 1024, backupCount=5
+        ),
     ]
     logging.basicConfig(
-        level=log_level,
+        level=getattr(logging, level.upper(), logging.INFO),
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
         handlers=handlers,
     )
@@ -41,12 +43,16 @@ def load_config(path: str) -> dict:
 
 
 def main():
-    config_path = os.environ.get("CONFIG_PATH", os.path.join(os.path.dirname(__file__), "../config/config.yaml"))
+    config_path = os.environ.get(
+        "CONFIG_PATH",
+        os.path.join(os.path.dirname(__file__), "../config/config.yaml"),
+    )
     config = load_config(config_path)
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     setup_logging(
         config["logging"]["level"],
-        os.path.join(os.path.dirname(__file__), "..", config["logging"]["file"]),
+        os.path.join(base_dir, config["logging"]["file"]),
     )
 
     global logger
@@ -65,20 +71,34 @@ def main():
         verify_ssl=config["splunk"]["verify_ssl"],
     )
 
+    queue_cfg = config.get("retry_queue", {})
+    queue = RetryQueue(
+        queue_dir=os.path.join(base_dir, queue_cfg.get("dir", "queue")),
+        max_bytes=int(queue_cfg.get("max_size_mb", 300)) * 1024 * 1024,
+    )
+
     ollama = OllamaCollector(
         base_url=config["ollama"]["base_url"],
         timeout=config["ollama"]["timeout"],
     )
-
     gpu = GPUCollector()
     interval = config["collection"]["interval_seconds"]
     gpu_enabled = config["collection"]["gpu_enabled"]
 
-    logger.info("Collecting every %d seconds. GPU collection: %s", interval, gpu_enabled)
+    logger.info("Collecting every %d seconds. GPU: %s  Queue cap: %d MB",
+                interval, gpu_enabled, queue_cfg.get("max_size_mb", 300))
 
     while running:
-        events = []
+        # --- 1. Drain queued events before collecting new ones ---
+        if queue.pending_batches() > 0:
+            logger.info("Retrying queued batches (%d, %.1f MB)...",
+                        queue.pending_batches(), queue.size_mb())
+            replayed = queue.drain(hec.send_batch)
+            if replayed:
+                logger.info("Replayed %d queued events successfully", replayed)
 
+        # --- 2. Collect ---
+        events = []
         try:
             ollama_data = ollama.collect()
             events.append(ollama_data)
@@ -98,11 +118,14 @@ def main():
             except Exception as e:
                 logger.error("GPU collection error: %s", e)
 
+        # --- 3. Send (queue on failure) ---
         if events:
-            success = hec.send_batch(events)
-            if not success:
-                logger.warning("Failed to send %d events to Splunk HEC", len(events))
+            if not hec.send_batch(events):
+                logger.warning("Send failed, queuing %d events (queue now %.1f MB)",
+                               len(events), queue.size_mb())
+                queue.push(events)
 
+        # --- 4. Wait ---
         for _ in range(interval):
             if not running:
                 break

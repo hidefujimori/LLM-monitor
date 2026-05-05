@@ -13,6 +13,9 @@ build/
 logs/
 *.log
 
+# Retry queue (runtime data)
+queue/
+
 # Config with secrets (use config.yaml.example instead)
 config/config.yaml
 

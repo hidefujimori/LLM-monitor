@@ -26,30 +26,15 @@ class SplunkHEC:
         }
         self.verify_ssl = verify_ssl
 
-    def send(self, event: dict[str, Any], metadata: dict[str, Any] | None = None) -> bool:
-        payload = {**self.default_meta, **(metadata or {})}
-        payload["event"] = event
-        payload["time"] = time.time()
-
-        try:
-            response = requests.post(
-                self.hec_url,
-                headers=self.headers,
-                data=json.dumps(payload),
-                verify=self.verify_ssl,
-                timeout=10,
-            )
-            response.raise_for_status()
-            logger.debug("HEC send OK: %s", response.json())
-            return True
-        except requests.exceptions.RequestException as e:
-            logger.error("HEC send failed: %s", e)
-            return False
-
     def send_batch(self, events: list[dict[str, Any]]) -> bool:
+        """Send a batch of events. Returns True on success, False on any failure."""
+        if not events:
+            return True
+
         batch = ""
+        ts = time.time()
         for event in events:
-            payload = {**self.default_meta, "event": event, "time": time.time()}
+            payload = {**self.default_meta, "event": event, "time": ts}
             batch += json.dumps(payload) + "\n"
 
         try:
@@ -61,8 +46,17 @@ class SplunkHEC:
                 timeout=10,
             )
             response.raise_for_status()
-            logger.debug("HEC batch send OK: %d events", len(events))
+            logger.debug("HEC send OK: %d events", len(events))
             return True
+        except requests.exceptions.ConnectionError:
+            logger.warning("Splunk HEC unreachable (%s)", self.hec_url)
+            return False
+        except requests.exceptions.Timeout:
+            logger.warning("Splunk HEC timed out")
+            return False
+        except requests.exceptions.HTTPError as e:
+            logger.error("Splunk HEC HTTP error: %s", e)
+            return False
         except requests.exceptions.RequestException as e:
-            logger.error("HEC batch send failed: %s", e)
+            logger.error("Splunk HEC send failed: %s", e)
             return False

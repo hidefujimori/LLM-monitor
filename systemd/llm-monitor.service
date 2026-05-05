@@ -1,0 +1,18 @@
+[Unit]
+Description=LLM Monitor Collector (Ollama + GPU → Splunk HEC)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=hfujimori
+WorkingDirectory=/home/hfujimori/LLM-monitor
+ExecStart=/home/hfujimori/LLM-monitor/.venv/bin/python3 /home/hfujimori/LLM-monitor/collector/main.py
+Environment=CONFIG_PATH=/home/hfujimori/LLM-monitor/config/config.yaml
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
