@@ -115,7 +115,7 @@
       <title>GPU Utilization (%) - Over Time</title>
       <chart>
         <search>
-          <query>index=llm_monitor metric_type=gpu | mvexpand gpus | spath input=gpus | timechart avg(gpu_utilization_pct) by name span=1m</query>
+          <query>index=llm_monitor metric_type=gpu | spath output=gpu_json path="gpus{}" | mvexpand gpu_json | spath input=gpu_json | timechart avg(gpu_utilization_pct) by name span=1m</query>
           <earliest>-1h</earliest>
           <latest>now</latest>
         </search>
@@ -132,7 +132,7 @@
       <title>GPU Temperature (°C) - Over Time</title>
       <chart>
         <search>
-          <query>index=llm_monitor metric_type=gpu | mvexpand gpus | spath input=gpus | timechart avg(temperature_c) by name span=1m</query>
+          <query>index=llm_monitor metric_type=gpu | spath output=gpu_json path="gpus{}" | mvexpand gpu_json | spath input=gpu_json | timechart avg(temperature_c) by name span=1m</query>
           <earliest>-1h</earliest>
           <latest>now</latest>
         </search>
@@ -164,7 +164,7 @@
       <title>GPU Power Draw (W) - Over Time</title>
       <chart>
         <search>
-          <query>index=llm_monitor metric_type=gpu | mvexpand gpus | spath input=gpus | timechart avg(power_draw_w) by name span=1m</query>
+          <query>index=llm_monitor metric_type=gpu | spath output=gpu_json path="gpus{}" | mvexpand gpu_json | spath input=gpu_json | timechart avg(power_draw_w) by name span=1m</query>
           <earliest>-1h</earliest>
           <latest>now</latest>
         </search>
@@ -181,7 +181,7 @@
       <title>Current GPU Status</title>
       <table>
         <search>
-          <query>index=llm_monitor metric_type=gpu | head 1 | mvexpand gpus | spath input=gpus | table name, vendor, temperature_c, gpu_utilization_pct, memory_used_pct, memory_used_mb, memory_total_mb, power_draw_w, performance_state</query>
+          <query>index=llm_monitor metric_type=gpu | head 1 | spath output=gpu_json path="gpus{}" | mvexpand gpu_json | spath input=gpu_json | table name, vendor, temperature_c, gpu_utilization_pct, memory_used_pct, memory_used_mb, memory_total_mb, power_draw_w, performance_state</query>
           <earliest>-5m</earliest>
           <latest>now</latest>
         </search>
@@ -196,7 +196,7 @@
       <title>Ollama Models Installed</title>
       <table>
         <search>
-          <query>index=llm_monitor metric_type=ollama | head 1 | mvexpand models | spath input=models | table name, family, parameter_size, quantization, size_gb, modified_at</query>
+          <query>index=llm_monitor metric_type=ollama | head 1 | spath output=model_json path="models{}" | mvexpand model_json | spath input=model_json | table name, family, parameter_size, quantization, size_gb, modified_at</query>
           <earliest>-5m</earliest>
           <latest>now</latest>
         </search>
@@ -209,7 +209,7 @@
       <title>Currently Running Models</title>
       <table>
         <search>
-          <query>index=llm_monitor metric_type=ollama running_model_count>0 | head 1 | mvexpand running_models | spath input=running_models | table name, size_vram_gb, expires_at</query>
+          <query>index=llm_monitor metric_type=ollama running_model_count>0 | head 1 | spath output=running_json path="running_models{}" | mvexpand running_json | spath input=running_json | table name, size_vram_gb, expires_at</query>
           <earliest>-5m</earliest>
           <latest>now</latest>
         </search>

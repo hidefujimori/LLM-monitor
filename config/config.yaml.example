@@ -1,5 +1,5 @@
 splunk:
-  hec_url: "http://172.26.10.100:8088/services/collector/event"
+  hec_url: "https://172.26.10.100:8088/services/collector/event"
   hec_token: "YOUR-HEC-TOKEN-HERE"
   index: "llm_monitor"
   source: "llm-monitor"
