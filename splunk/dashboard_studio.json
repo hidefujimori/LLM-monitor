@@ -19,34 +19,34 @@
     }
   },
   "inputs": {
-    "input_refresh": {
+    "input_timerange": {
       "type": "input.dropdown",
-      "title": "\u66f4\u65b0\u9593\u9694",
+      "title": "\u8868\u793a\u671f\u9593",
       "options": {
         "items": [
           {
-            "label": "30\u79d2",
-            "value": "30"
+            "label": "\u904e\u53bb30\u5206",
+            "value": "-30m"
           },
           {
-            "label": "60\u79d2",
-            "value": "60"
+            "label": "\u904e\u53bb1\u6642\u9593",
+            "value": "-1h"
           },
           {
-            "label": "5\u5206",
-            "value": "300"
+            "label": "\u904e\u53bb3\u6642\u9593",
+            "value": "-3h"
           },
           {
-            "label": "15\u5206",
-            "value": "900"
+            "label": "\u904e\u53bb6\u6642\u9593",
+            "value": "-6h"
           },
           {
-            "label": "\u624b\u52d5",
-            "value": "0"
+            "label": "\u904e\u53bb24\u6642\u9593",
+            "value": "-24h"
           }
         ],
-        "defaultValue": "60",
-        "token": "refresh_interval"
+        "defaultValue": "-1h",
+        "token": "time_range"
       }
     }
   },
@@ -486,7 +486,7 @@
           "earliest": "-5m",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_s02": {
@@ -497,7 +497,7 @@
           "earliest": "-5m",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_s03": {
@@ -508,7 +508,7 @@
           "earliest": "-5m",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_s04": {
@@ -519,7 +519,7 @@
           "earliest": "-5m",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_s05": {
@@ -530,7 +530,7 @@
           "earliest": "-5m",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_s06": {
@@ -541,7 +541,7 @@
           "earliest": "-5m",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_s07": {
@@ -552,7 +552,7 @@
           "earliest": "-5m",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_s08": {
@@ -563,7 +563,7 @@
           "earliest": "-5m",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_s09": {
@@ -574,7 +574,7 @@
           "earliest": "-5m",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_s10": {
@@ -585,7 +585,7 @@
           "earliest": "-5m",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_s11": {
@@ -596,7 +596,7 @@
           "earliest": "-5m",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_s12": {
@@ -607,7 +607,7 @@
           "earliest": "-5m",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_s13": {
@@ -618,7 +618,7 @@
           "earliest": "-5m",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_c01": {
@@ -626,10 +626,10 @@
       "options": {
         "query": "index=llm_monitor metric_type=gpu | spath output=g path=\"gpus{}\" | mvexpand g | spath input=g | timechart avg(gpu_utilization_pct) by name span=1m",
         "queryParameters": {
-          "earliest": "-1h",
+          "earliest": "$time_range$",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_c02": {
@@ -637,10 +637,10 @@
       "options": {
         "query": "index=llm_monitor metric_type=gpu | spath output=g path=\"gpus{}\" | mvexpand g | spath input=g | timechart avg(temperature_c) by name span=1m",
         "queryParameters": {
-          "earliest": "-1h",
+          "earliest": "$time_range$",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_c03": {
@@ -648,10 +648,10 @@
       "options": {
         "query": "index=llm_monitor metric_type=gpu | eval used=round(used_vram_mb/1024,2) | eval total=round(total_vram_mb/1024,2) | timechart avg(used) as \"Used VRAM (GB)\", avg(total) as \"Total VRAM (GB)\" span=1m",
         "queryParameters": {
-          "earliest": "-1h",
+          "earliest": "$time_range$",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_c04": {
@@ -659,10 +659,10 @@
       "options": {
         "query": "index=llm_monitor metric_type=gpu | spath output=g path=\"gpus{}\" | mvexpand g | spath input=g | timechart avg(power_draw_w) by name span=1m",
         "queryParameters": {
-          "earliest": "-1h",
+          "earliest": "$time_range$",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_c05": {
@@ -670,10 +670,10 @@
       "options": {
         "query": "index=llm_monitor metric_type=ollama running_model_count>0 | head 20 | spath output=rm path=\"running_models{}\" | mvexpand rm | spath input=rm | chart avg(size_vram_gb) as \"VRAM (GB)\", avg(size_ram_gb) as \"RAM Offload (GB)\" by name",
         "queryParameters": {
-          "earliest": "-5m",
+          "earliest": "$time_range$",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_c06": {
@@ -681,10 +681,10 @@
       "options": {
         "query": "index=llm_monitor metric_type=gpu | eval vram_pct=round(used_vram_mb/total_vram_mb*100,1) | timechart avg(vram_pct) as \"VRAM Usage (%)\" span=1m",
         "queryParameters": {
-          "earliest": "-1h",
+          "earliest": "$time_range$",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_t01": {
@@ -695,7 +695,7 @@
           "earliest": "-5m",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_t02": {
@@ -706,7 +706,7 @@
           "earliest": "-5m",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     },
     "ds_t03": {
@@ -717,7 +717,7 @@
           "earliest": "-5m",
           "latest": "now"
         },
-        "refresh": "$refresh_interval$"
+        "refresh": 60
       }
     }
   },
@@ -1002,7 +1002,7 @@
       }
     ],
     "globalInputs": [
-      "input_refresh"
+      "input_timerange"
     ]
   }
 }
