@@ -44,12 +44,33 @@ class OllamaCollector:
         running_models = []
         if running_data and "models" in running_data:
             for m in running_data["models"]:
+                size_total = m.get("size", 0)
+                size_vram = m.get("size_vram", 0)
+                size_ram = max(size_total - size_vram, 0)
+                offloaded = size_ram > 0
+
                 running_models.append({
                     "name": m.get("name"),
-                    "size_vram_bytes": m.get("size_vram"),
-                    "size_vram_gb": round(m.get("size_vram", 0) / 1024**3, 2),
+                    # VRAM portion
+                    "size_vram_bytes": size_vram,
+                    "size_vram_gb": round(size_vram / 1024**3, 2),
+                    # RAM offload portion
+                    "size_ram_bytes": size_ram,
+                    "size_ram_gb": round(size_ram / 1024**3, 2),
+                    # Total (VRAM + RAM)
+                    "size_total_bytes": size_total,
+                    "size_total_gb": round(size_total / 1024**3, 2),
+                    # Offload flag
+                    "offloaded_to_ram": offloaded,
                     "expires_at": m.get("expires_at"),
                 })
+
+        total_vram_used_gb = round(
+            sum(m["size_vram_gb"] for m in running_models), 2
+        )
+        total_ram_used_gb = round(
+            sum(m["size_ram_gb"] for m in running_models), 2
+        )
 
         return {
             "metric_type": "ollama",
@@ -59,4 +80,7 @@ class OllamaCollector:
             "models": models,
             "running_model_count": len(running_models),
             "running_models": running_models,
+            "running_total_vram_gb": total_vram_used_gb,
+            "running_total_ram_gb": total_ram_used_gb,
+            "any_offloaded_to_ram": any(m["offloaded_to_ram"] for m in running_models),
         }
