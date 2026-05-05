@@ -2,36 +2,137 @@
   <label>LLM Monitor - Ollama &amp; GPU Dashboard</label>
   <description>Real-time monitoring of Ollama LLM server and GPU resources</description>
 
-  <!-- ═══════════════════════════════════════════════════════
-       SECTION 1: Ollama Overview
-       ══════════════════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════════════════════════════════════
+       CSS INJECTION — Tech / Dark Navy style
+       ══════════════════════════════════════════════════════════════════ -->
   <row>
     <panel>
-      <title>Ollama Status</title>
+      <html>
+        <![CDATA[
+        <style>
+          /* --- Global background ------------------------------------ */
+          body,
+          .dashboard-body,
+          .fieldset,
+          .dashboard-view-controls,
+          .edit-dashboard-btn-group { background: #060f1e !important; }
+
+          /* --- Dashboard title -------------------------------------- */
+          .dashboard-title {
+            color: #00e5ff !important;
+            font-size: 22px !important;
+            font-weight: 700 !important;
+            letter-spacing: 2px !important;
+            text-shadow: 0 0 18px rgba(0,229,255,0.7) !important;
+          }
+          .dashboard-description { color: #48cae4 !important; }
+
+          /* --- Panel body ------------------------------------------ */
+          .dashboard-cell .panel-body {
+            background: #0b1f35 !important;
+            border: 1px solid #1a4a6e !important;
+            border-radius: 6px !important;
+            box-shadow: 0 0 16px rgba(0,180,216,0.18),
+                        inset 0 1px 0 rgba(0,229,255,0.06) !important;
+          }
+          /* --- Panel title header ---------------------------------- */
+          .panel-head {
+            background: #081526 !important;
+            border-bottom: 1px solid #1a4a6e !important;
+            border-radius: 6px 6px 0 0 !important;
+          }
+          .panel-head h3 {
+            color: #48cae4 !important;
+            font-size: 10px !important;
+            font-weight: 700 !important;
+            letter-spacing: 2px !important;
+            text-transform: uppercase !important;
+          }
+
+          /* --- Single value ---------------------------------------- */
+          .single-result {
+            color: #00e5ff !important;
+            text-shadow: 0 0 12px rgba(0,229,255,0.55) !important;
+          }
+          .single-unit, .single-label { color: #90e0ef !important; }
+
+          /* --- Tables ---------------------------------------------- */
+          .table-chrome thead th,
+          .table-chrome th {
+            background: #081526 !important;
+            color: #48cae4 !important;
+            border-bottom: 1px solid #1a4a6e !important;
+            font-size: 10px !important;
+            letter-spacing: 1.5px !important;
+            text-transform: uppercase !important;
+          }
+          .table-chrome tbody td { color: #caf0f8 !important; border-color: #122a42 !important; }
+          .table-chrome tbody tr:nth-child(odd)  { background: rgba(0,180,216,0.04) !important; }
+          .table-chrome tbody tr:hover           { background: rgba(0,229,255,0.09) !important; }
+
+          /* --- Chart internals ------------------------------------- */
+          .highcharts-background { fill: #0b1f35 !important; }
+          .highcharts-grid-line  { stroke: #1a4a6e !important; opacity:0.6 !important; }
+          .highcharts-axis-labels text,
+          .highcharts-axis text  { fill: #90e0ef !important; }
+          .highcharts-legend-item text { fill: #caf0f8 !important; }
+          .highcharts-title { fill: #00e5ff !important; }
+
+          /* --- Section header ---------------------------------- */
+          .llm-section {
+            padding: 4px 12px;
+            background: linear-gradient(90deg, #0d2a40 0%, transparent 100%);
+            border-left: 3px solid #00b4d8;
+            color: #48cae4;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin: 0;
+            line-height: 28px;
+          }
+
+          /* --- Offload warning row ----------------------------- */
+          .offload-yes { color: #f8be34 !important; font-weight:700; }
+          .offload-no  { color: #53a051 !important; }
+        </style>
+        ]]>
+      </html>
+    </panel>
+  </row>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       SECTION 1 ▸ OLLAMA STATUS
+       ══════════════════════════════════════════════════════════════════ -->
+  <row>
+    <panel>
+      <html><![CDATA[<div class="llm-section">▸ OLLAMA STATUS</div>]]></html>
+    </panel>
+  </row>
+
+  <row>
+    <panel>
+      <title>Status</title>
       <single>
         <search>
-          <query>index=llm_monitor metric_type=ollama | head 1 | eval status_display=upper(status) | table status_display</query>
-          <earliest>-5m</earliest>
-          <latest>now</latest>
+          <query>index=llm_monitor metric_type=ollama | head 1 | eval v=upper(status) | table v</query>
+          <earliest>-5m</earliest><latest>now</latest>
         </search>
-        <option name="field">status_display</option>
+        <option name="field">v</option>
         <option name="colorMode">block</option>
         <option name="useColors">1</option>
         <option name="rangeValues">[1]</option>
         <option name="rangeColors">["0x53a051","0xdc4e41"]</option>
-        <option name="trellis.enabled">0</option>
       </single>
     </panel>
     <panel>
-      <title>Ollama Version</title>
+      <title>Version</title>
       <single>
         <search>
           <query>index=llm_monitor metric_type=ollama | head 1 | table version</query>
-          <earliest>-5m</earliest>
-          <latest>now</latest>
+          <earliest>-5m</earliest><latest>now</latest>
         </search>
         <option name="field">version</option>
-        <option name="colorMode">none</option>
       </single>
     </panel>
     <panel>
@@ -39,12 +140,10 @@
       <single>
         <search>
           <query>index=llm_monitor metric_type=ollama | head 1 | table model_count</query>
-          <earliest>-5m</earliest>
-          <latest>now</latest>
+          <earliest>-5m</earliest><latest>now</latest>
         </search>
         <option name="field">model_count</option>
         <option name="unit">models</option>
-        <option name="colorMode">none</option>
       </single>
     </panel>
     <panel>
@@ -52,26 +151,24 @@
       <single>
         <search>
           <query>index=llm_monitor metric_type=ollama | head 1 | table running_model_count</query>
-          <earliest>-5m</earliest>
-          <latest>now</latest>
+          <earliest>-5m</earliest><latest>now</latest>
         </search>
         <option name="field">running_model_count</option>
         <option name="unit">models</option>
         <option name="colorMode">block</option>
         <option name="useColors">1</option>
         <option name="rangeValues">[1]</option>
-        <option name="rangeColors">["0x555555","0x53a051"]</option>
+        <option name="rangeColors">["0x444444","0x53a051"]</option>
       </single>
     </panel>
     <panel>
       <title>RAM Offload Active</title>
       <single>
         <search>
-          <query>index=llm_monitor metric_type=ollama | head 1 | eval offload=if(any_offloaded_to_ram="True","YES","NO") | table offload</query>
-          <earliest>-5m</earliest>
-          <latest>now</latest>
+          <query>index=llm_monitor metric_type=ollama | head 1 | eval v=if(any_offloaded_to_ram="True","YES","NO") | table v</query>
+          <earliest>-5m</earliest><latest>now</latest>
         </search>
-        <option name="field">offload</option>
+        <option name="field">v</option>
         <option name="colorMode">block</option>
         <option name="useColors">1</option>
         <option name="rangeValues">[1]</option>
@@ -80,32 +177,35 @@
     </panel>
   </row>
 
-  <!-- ═══════════════════════════════════════════════════════
-       SECTION 2: GPU Overview
-       ══════════════════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════════════════════════════════════
+       SECTION 2 ▸ GPU OVERVIEW
+       ══════════════════════════════════════════════════════════════════ -->
+  <row>
+    <panel>
+      <html><![CDATA[<div class="llm-section">▸ GPU OVERVIEW</div>]]></html>
+    </panel>
+  </row>
+
   <row>
     <panel>
       <title>GPU Count</title>
       <single>
         <search>
           <query>index=llm_monitor metric_type=gpu | head 1 | table gpu_count</query>
-          <earliest>-5m</earliest>
-          <latest>now</latest>
+          <earliest>-5m</earliest><latest>now</latest>
         </search>
         <option name="field">gpu_count</option>
         <option name="unit">GPUs</option>
-        <option name="colorMode">none</option>
       </single>
     </panel>
     <panel>
-      <title>VRAM Usage</title>
+      <title>VRAM Usage %</title>
       <single>
         <search>
-          <query>index=llm_monitor metric_type=gpu | head 1 | eval vram_pct=round(used_vram_mb/total_vram_mb*100,1) | table vram_pct</query>
-          <earliest>-5m</earliest>
-          <latest>now</latest>
+          <query>index=llm_monitor metric_type=gpu | head 1 | eval v=round(used_vram_mb/total_vram_mb*100,1) | table v</query>
+          <earliest>-5m</earliest><latest>now</latest>
         </search>
-        <option name="field">vram_pct</option>
+        <option name="field">v</option>
         <option name="unit">%</option>
         <option name="colorMode">block</option>
         <option name="useColors">1</option>
@@ -117,56 +217,43 @@
       <title>Used VRAM</title>
       <single>
         <search>
-          <query>index=llm_monitor metric_type=gpu | head 1 | eval used_gb=round(used_vram_mb/1024,1) | table used_gb</query>
-          <earliest>-5m</earliest>
-          <latest>now</latest>
+          <query>index=llm_monitor metric_type=gpu | head 1 | eval v=round(used_vram_mb/1024,1) | table v</query>
+          <earliest>-5m</earliest><latest>now</latest>
         </search>
-        <option name="field">used_gb</option>
+        <option name="field">v</option>
         <option name="unit">GB</option>
-        <option name="colorMode">none</option>
       </single>
     </panel>
     <panel>
       <title>Free VRAM</title>
       <single>
         <search>
-          <query>index=llm_monitor metric_type=gpu | head 1 | eval free_gb=round(free_vram_mb/1024,1) | table free_gb</query>
-          <earliest>-5m</earliest>
-          <latest>now</latest>
+          <query>index=llm_monitor metric_type=gpu | head 1 | eval v=round(free_vram_mb/1024,1) | table v</query>
+          <earliest>-5m</earliest><latest>now</latest>
         </search>
-        <option name="field">free_gb</option>
+        <option name="field">v</option>
         <option name="unit">GB</option>
-        <option name="colorMode">none</option>
       </single>
     </panel>
     <panel>
       <title>Total VRAM</title>
       <single>
         <search>
-          <query>index=llm_monitor metric_type=gpu | head 1 | eval total_gb=round(total_vram_mb/1024,1) | table total_gb</query>
-          <earliest>-5m</earliest>
-          <latest>now</latest>
+          <query>index=llm_monitor metric_type=gpu | head 1 | eval v=round(total_vram_mb/1024,1) | table v</query>
+          <earliest>-5m</earliest><latest>now</latest>
         </search>
-        <option name="field">total_gb</option>
+        <option name="field">v</option>
         <option name="unit">GB</option>
-        <option name="colorMode">none</option>
       </single>
     </panel>
-  </row>
-
-  <!-- ═══════════════════════════════════════════════════════
-       SECTION 3: GPU Instant Metrics (latest values)
-       ══════════════════════════════════════════════════════ -->
-  <row>
     <panel>
-      <title>GPU Utilization (Current)</title>
+      <title>GPU Utilization</title>
       <single>
         <search>
-          <query>index=llm_monitor metric_type=gpu | head 1 | spath output=gpu_json path="gpus{}" | mvexpand gpu_json | spath input=gpu_json | stats avg(gpu_utilization_pct) as util | eval util=round(util,1) | table util</query>
-          <earliest>-5m</earliest>
-          <latest>now</latest>
+          <query>index=llm_monitor metric_type=gpu | head 1 | spath output=g path="gpus{}" | mvexpand g | spath input=g | stats avg(gpu_utilization_pct) as v | eval v=round(v,1) | table v</query>
+          <earliest>-5m</earliest><latest>now</latest>
         </search>
-        <option name="field">util</option>
+        <option name="field">v</option>
         <option name="unit">%</option>
         <option name="colorMode">block</option>
         <option name="useColors">1</option>
@@ -175,14 +262,13 @@
       </single>
     </panel>
     <panel>
-      <title>GPU Temperature (Current)</title>
+      <title>GPU Temperature</title>
       <single>
         <search>
-          <query>index=llm_monitor metric_type=gpu | head 1 | spath output=gpu_json path="gpus{}" | mvexpand gpu_json | spath input=gpu_json | stats avg(temperature_c) as temp | eval temp=round(temp,1) | table temp</query>
-          <earliest>-5m</earliest>
-          <latest>now</latest>
+          <query>index=llm_monitor metric_type=gpu | head 1 | spath output=g path="gpus{}" | mvexpand g | spath input=g | stats avg(temperature_c) as v | eval v=round(v,1) | table v</query>
+          <earliest>-5m</earliest><latest>now</latest>
         </search>
-        <option name="field">temp</option>
+        <option name="field">v</option>
         <option name="unit">°C</option>
         <option name="colorMode">block</option>
         <option name="useColors">1</option>
@@ -191,70 +277,62 @@
       </single>
     </panel>
     <panel>
-      <title>GPU Power Draw (Current)</title>
+      <title>Power Draw</title>
       <single>
         <search>
-          <query>index=llm_monitor metric_type=gpu | head 1 | spath output=gpu_json path="gpus{}" | mvexpand gpu_json | spath input=gpu_json | stats avg(power_draw_w) as pwr | eval pwr=round(pwr,1) | table pwr</query>
-          <earliest>-5m</earliest>
-          <latest>now</latest>
+          <query>index=llm_monitor metric_type=gpu | head 1 | spath output=g path="gpus{}" | mvexpand g | spath input=g | stats avg(power_draw_w) as v | eval v=round(v,1) | table v</query>
+          <earliest>-5m</earliest><latest>now</latest>
         </search>
-        <option name="field">pwr</option>
+        <option name="field">v</option>
         <option name="unit">W</option>
-        <option name="colorMode">none</option>
-      </single>
-    </panel>
-    <panel>
-      <title>Performance State</title>
-      <single>
-        <search>
-          <query>index=llm_monitor metric_type=gpu | head 1 | spath output=gpu_json path="gpus{}" | mvexpand gpu_json | spath input=gpu_json | head 1 | table performance_state</query>
-          <earliest>-5m</earliest>
-          <latest>now</latest>
-        </search>
-        <option name="field">performance_state</option>
-        <option name="colorMode">none</option>
       </single>
     </panel>
   </row>
 
-  <!-- ═══════════════════════════════════════════════════════
-       SECTION 4: GPU Time-Series Charts
-       ══════════════════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════════════════════════════════════
+       SECTION 3 ▸ GPU TIME-SERIES CHARTS
+       ══════════════════════════════════════════════════════════════════ -->
+  <row>
+    <panel>
+      <html><![CDATA[<div class="llm-section">▸ GPU METRICS — HISTORY</div>]]></html>
+    </panel>
+  </row>
+
   <row>
     <panel>
       <title>GPU Utilization (%) — Over Time</title>
       <chart>
         <search>
-          <query>index=llm_monitor metric_type=gpu | spath output=gpu_json path="gpus{}" | mvexpand gpu_json | spath input=gpu_json | timechart avg(gpu_utilization_pct) by name span=1m</query>
-          <earliest>-1h</earliest>
-          <latest>now</latest>
+          <query>index=llm_monitor metric_type=gpu | spath output=g path="gpus{}" | mvexpand g | spath input=g | timechart avg(gpu_utilization_pct) by name span=1m</query>
+          <earliest>-1h</earliest><latest>now</latest>
         </search>
         <option name="charting.chart">line</option>
         <option name="charting.chart.nullValueMode">connect</option>
-        <option name="charting.seriesColors">["0x53a051","0x5379af","0xf8be34"]</option>
+        <option name="charting.seriesColors">["0x00b4d8","0xf8be34","0x53a051"]</option>
         <option name="charting.axisTitleX.text">Time</option>
         <option name="charting.axisTitleY.text">Utilization (%)</option>
         <option name="charting.axisY.maximumNumber">100</option>
         <option name="charting.axisY.minimumNumber">0</option>
         <option name="charting.legend.placement">bottom</option>
         <option name="charting.chart.style">shiny</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
       </chart>
     </panel>
     <panel>
       <title>GPU Temperature (°C) — Over Time</title>
       <chart>
         <search>
-          <query>index=llm_monitor metric_type=gpu | spath output=gpu_json path="gpus{}" | mvexpand gpu_json | spath input=gpu_json | timechart avg(temperature_c) by name span=1m</query>
-          <earliest>-1h</earliest>
-          <latest>now</latest>
+          <query>index=llm_monitor metric_type=gpu | spath output=g path="gpus{}" | mvexpand g | spath input=g | timechart avg(temperature_c) by name span=1m</query>
+          <earliest>-1h</earliest><latest>now</latest>
         </search>
         <option name="charting.chart">line</option>
         <option name="charting.chart.nullValueMode">connect</option>
-        <option name="charting.seriesColors">["0xf8be34","0xdc4e41","0x53a051"]</option>
+        <option name="charting.seriesColors">["0xf8be34","0xdc4e41","0x00b4d8"]</option>
         <option name="charting.axisTitleX.text">Time</option>
         <option name="charting.axisTitleY.text">Temperature (°C)</option>
         <option name="charting.legend.placement">bottom</option>
         <option name="charting.chart.style">shiny</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
       </chart>
     </panel>
   </row>
@@ -264,56 +342,59 @@
       <title>VRAM Usage (GB) — Over Time</title>
       <chart>
         <search>
-          <query>index=llm_monitor metric_type=gpu | eval used_vram_gb=round(used_vram_mb/1024,2) | eval total_vram_gb=round(total_vram_mb/1024,2) | timechart avg(used_vram_gb) as "Used VRAM (GB)", avg(total_vram_gb) as "Total VRAM (GB)" span=1m</query>
-          <earliest>-1h</earliest>
-          <latest>now</latest>
+          <query>index=llm_monitor metric_type=gpu | eval used=round(used_vram_mb/1024,2) | eval total=round(total_vram_mb/1024,2) | timechart avg(used) as "Used VRAM (GB)", avg(total) as "Total VRAM (GB)" span=1m</query>
+          <earliest>-1h</earliest><latest>now</latest>
         </search>
         <option name="charting.chart">area</option>
         <option name="charting.chart.nullValueMode">connect</option>
-        <option name="charting.seriesColors">["0x5379af","0x555555"]</option>
-        <option name="charting.axisTitleX.text">Time</option>
+        <option name="charting.seriesColors">["0x0096c7","0x1a4a6e"]</option>
         <option name="charting.axisTitleY.text">VRAM (GB)</option>
         <option name="charting.legend.placement">bottom</option>
         <option name="charting.chart.style">shiny</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
       </chart>
     </panel>
     <panel>
       <title>GPU Power Draw (W) — Over Time</title>
       <chart>
         <search>
-          <query>index=llm_monitor metric_type=gpu | spath output=gpu_json path="gpus{}" | mvexpand gpu_json | spath input=gpu_json | timechart avg(power_draw_w) by name span=1m</query>
-          <earliest>-1h</earliest>
-          <latest>now</latest>
+          <query>index=llm_monitor metric_type=gpu | spath output=g path="gpus{}" | mvexpand g | spath input=g | timechart avg(power_draw_w) by name span=1m</query>
+          <earliest>-1h</earliest><latest>now</latest>
         </search>
-        <option name="charting.chart">line</option>
+        <option name="charting.chart">area</option>
         <option name="charting.chart.nullValueMode">connect</option>
-        <option name="charting.seriesColors">["0xf8be34","0xdc4e41","0x53a051"]</option>
-        <option name="charting.axisTitleX.text">Time</option>
+        <option name="charting.seriesColors">["0xf8be34","0xdc4e41"]</option>
         <option name="charting.axisTitleY.text">Power (W)</option>
         <option name="charting.legend.placement">bottom</option>
         <option name="charting.chart.style">shiny</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
       </chart>
     </panel>
   </row>
 
-  <!-- ═══════════════════════════════════════════════════════
-       SECTION 5: Per-Model GPU Status
-       ══════════════════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════════════════════════════════════
+       SECTION 4 ▸ PER-MODEL GPU METRICS
+       ══════════════════════════════════════════════════════════════════ -->
+  <row>
+    <panel>
+      <html><![CDATA[<div class="llm-section">▸ PER-MODEL GPU METRICS</div>]]></html>
+    </panel>
+  </row>
+
   <row>
     <panel>
       <title>VRAM Usage by Running Model (GB)</title>
       <chart>
         <search>
-          <query>index=llm_monitor metric_type=ollama running_model_count>0 | head 20 | spath output=rm_json path="running_models{}" | mvexpand rm_json | spath input=rm_json | eval label=name+" (VRAM)" | chart avg(size_vram_gb) as "VRAM (GB)", avg(size_ram_gb) as "RAM Offload (GB)" by name</query>
-          <earliest>-5m</earliest>
-          <latest>now</latest>
+          <query>index=llm_monitor metric_type=ollama running_model_count>0 | head 20 | spath output=rm path="running_models{}" | mvexpand rm | spath input=rm | chart avg(size_vram_gb) as "VRAM (GB)", avg(size_ram_gb) as "RAM Offload (GB)" by name</query>
+          <earliest>-5m</earliest><latest>now</latest>
         </search>
         <option name="charting.chart">bar</option>
-        <option name="charting.seriesColors">["0x5379af","0xf8be34"]</option>
+        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.seriesColors">["0x0096c7","0xf8be34"]</option>
         <option name="charting.axisTitleX.text">Model</option>
         <option name="charting.axisTitleY.text">Memory (GB)</option>
         <option name="charting.legend.placement">bottom</option>
-        <option name="charting.chart.stackMode">stacked</option>
         <option name="charting.chart.style">shiny</option>
       </chart>
     </panel>
@@ -322,83 +403,65 @@
       <chart>
         <search>
           <query>index=llm_monitor metric_type=gpu | eval vram_pct=round(used_vram_mb/total_vram_mb*100,1) | timechart avg(vram_pct) as "VRAM Usage (%)" span=1m</query>
-          <earliest>-1h</earliest>
-          <latest>now</latest>
+          <earliest>-1h</earliest><latest>now</latest>
         </search>
         <option name="charting.chart">area</option>
         <option name="charting.chart.nullValueMode">connect</option>
         <option name="charting.seriesColors">["0x53a051"]</option>
-        <option name="charting.axisTitleX.text">Time</option>
         <option name="charting.axisTitleY.text">VRAM Usage (%)</option>
         <option name="charting.axisY.maximumNumber">100</option>
         <option name="charting.axisY.minimumNumber">0</option>
         <option name="charting.legend.placement">bottom</option>
         <option name="charting.chart.style">shiny</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
       </chart>
     </panel>
   </row>
 
-  <!-- ═══════════════════════════════════════════════════════
-       SECTION 6: GPU Status Table
-       ══════════════════════════════════════════════════════ -->
+  <!-- ═══════════════════════════════════════════════════════════════════
+       SECTION 5 ▸ DETAIL TABLES
+       ══════════════════════════════════════════════════════════════════ -->
+  <row>
+    <panel>
+      <html><![CDATA[<div class="llm-section">▸ DETAIL TABLES</div>]]></html>
+    </panel>
+  </row>
+
   <row>
     <panel>
       <title>Current GPU Status</title>
       <table>
         <search>
-          <query>index=llm_monitor metric_type=gpu | head 1 | spath output=gpu_json path="gpus{}" | mvexpand gpu_json | spath input=gpu_json | eval vram_used_pct=round(memory_used_mb/memory_total_mb*100,1) | eval vram_label=memory_used_mb." MB / ".memory_total_mb." MB (".vram_used_pct."%)" | table name, vendor, temperature_c, gpu_utilization_pct, vram_label, power_draw_w, clock_graphics_mhz, performance_state | rename name AS "GPU Name", vendor AS "Vendor", temperature_c AS "Temp (°C)", gpu_utilization_pct AS "Util (%)", vram_label AS "VRAM Used", power_draw_w AS "Power (W)", clock_graphics_mhz AS "Clock (MHz)", performance_state AS "P-State"</query>
-          <earliest>-5m</earliest>
-          <latest>now</latest>
+          <query>index=llm_monitor metric_type=gpu | head 1 | spath output=g path="gpus{}" | mvexpand g | spath input=g | eval vram_label=memory_used_mb." / ".memory_total_mb." MB (".round(memory_used_mb/memory_total_mb*100,1)."%)" | table name, vendor, temperature_c, gpu_utilization_pct, vram_label, power_draw_w, clock_graphics_mhz, performance_state | rename name AS "GPU Name", vendor AS Vendor, temperature_c AS "Temp °C", gpu_utilization_pct AS "Util %", vram_label AS "VRAM Used", power_draw_w AS "Power W", clock_graphics_mhz AS "Clock MHz", performance_state AS "P-State"</query>
+          <earliest>-5m</earliest><latest>now</latest>
         </search>
         <option name="wrap">true</option>
         <option name="rowNumbers">false</option>
-        <option name="dataOverlayMode">none</option>
       </table>
     </panel>
   </row>
 
-  <!-- ═══════════════════════════════════════════════════════
-       SECTION 7: Running Models with VRAM + RAM Offload
-       ══════════════════════════════════════════════════════ -->
   <row>
     <panel>
-      <title>Currently Running Models (VRAM + RAM Offload)</title>
+      <title>Running Models — VRAM + RAM Offload</title>
       <table>
         <search>
-          <query>index=llm_monitor metric_type=ollama | head 1 | spath output=rm_json path="running_models{}" | mvexpand rm_json | spath input=rm_json | eval offload_label=if(offloaded_to_ram="true" OR offloaded_to_ram="True", "YES ("+size_ram_gb+" GB)", "NO") | eval vram_pct=round(size_vram_gb/total_vram_gb*100,1) | table name, size_vram_gb, size_ram_gb, size_total_gb, offload_label, expires_at | rename name AS "Model", size_vram_gb AS "VRAM (GB)", size_ram_gb AS "RAM Offload (GB)", size_total_gb AS "Total (GB)", offload_label AS "RAM Offload", expires_at AS "Expires At"</query>
-          <earliest>-5m</earliest>
-          <latest>now</latest>
+          <query>index=llm_monitor metric_type=ollama | head 1 | spath output=rm path="running_models{}" | mvexpand rm | spath input=rm | eval ram_offload=if(offloaded_to_ram="true" OR offloaded_to_ram="True", "YES  "+size_ram_gb+" GB", "—") | table name, size_vram_gb, size_ram_gb, size_total_gb, ram_offload, expires_at | rename name AS Model, size_vram_gb AS "VRAM (GB)", size_ram_gb AS "RAM (GB)", size_total_gb AS "Total (GB)", ram_offload AS "RAM Offload", expires_at AS "Expires At"</query>
+          <earliest>-5m</earliest><latest>now</latest>
         </search>
         <option name="wrap">true</option>
         <option name="rowNumbers">false</option>
       </table>
     </panel>
-    <panel>
-      <title>Running Models VRAM Summary</title>
-      <single>
-        <search>
-          <query>index=llm_monitor metric_type=ollama | head 1 | eval vram_label=running_total_vram_gb." GB VRAM" | table vram_label</query>
-          <earliest>-5m</earliest>
-          <latest>now</latest>
-        </search>
-        <option name="field">vram_label</option>
-        <option name="colorMode">none</option>
-        <option name="beforeLabel">Models using</option>
-      </single>
-    </panel>
   </row>
 
-  <!-- ═══════════════════════════════════════════════════════
-       SECTION 8: Installed Models
-       ══════════════════════════════════════════════════════ -->
   <row>
     <panel>
       <title>Installed Models</title>
       <table>
         <search>
-          <query>index=llm_monitor metric_type=ollama | head 1 | spath output=model_json path="models{}" | mvexpand model_json | spath input=model_json | table name, family, parameter_size, quantization, size_gb, modified_at | rename name AS "Model", family AS "Family", parameter_size AS "Parameters", quantization AS "Quantization", size_gb AS "Size (GB)", modified_at AS "Last Modified"</query>
-          <earliest>-5m</earliest>
-          <latest>now</latest>
+          <query>index=llm_monitor metric_type=ollama | head 1 | spath output=m path="models{}" | mvexpand m | spath input=m | table name, family, parameter_size, quantization, size_gb, modified_at | rename name AS Model, family AS Family, parameter_size AS Parameters, quantization AS Quantization, size_gb AS "Size (GB)", modified_at AS "Last Modified"</query>
+          <earliest>-5m</earliest><latest>now</latest>
         </search>
         <option name="wrap">true</option>
         <option name="rowNumbers">true</option>
