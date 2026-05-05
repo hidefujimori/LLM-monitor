@@ -23,13 +23,13 @@
     "viz_h1": {
       "type": "splunk.markdown",
       "options": {
-        "markdown": "### ◈  OLLAMA STATUS",
+        "markdown": "### \u25c8  OLLAMA STATUS",
         "backgroundColor": "#050e1a",
         "fontColor": "#00b4d8"
       }
     },
     "viz_s01": {
-      "type": "splunk.single",
+      "type": "splunk.singlevalue",
       "title": "Status",
       "dataSources": {
         "primary": "ds_s01"
@@ -43,7 +43,7 @@
       }
     },
     "viz_s02": {
-      "type": "splunk.single",
+      "type": "splunk.singlevalue",
       "title": "Ollama Version",
       "dataSources": {
         "primary": "ds_s02"
@@ -55,7 +55,7 @@
       }
     },
     "viz_s03": {
-      "type": "splunk.single",
+      "type": "splunk.singlevalue",
       "title": "Installed Models",
       "dataSources": {
         "primary": "ds_s03"
@@ -69,7 +69,7 @@
       }
     },
     "viz_s04": {
-      "type": "splunk.single",
+      "type": "splunk.singlevalue",
       "title": "Running Models",
       "dataSources": {
         "primary": "ds_s04"
@@ -96,7 +96,7 @@
       }
     },
     "viz_s05": {
-      "type": "splunk.single",
+      "type": "splunk.singlevalue",
       "title": "RAM Offload Active",
       "dataSources": {
         "primary": "ds_s05"
@@ -110,13 +110,13 @@
     "viz_h2": {
       "type": "splunk.markdown",
       "options": {
-        "markdown": "### ◈  GPU OVERVIEW",
+        "markdown": "### \u25c8  GPU OVERVIEW",
         "backgroundColor": "#050e1a",
         "fontColor": "#00b4d8"
       }
     },
     "viz_s06": {
-      "type": "splunk.single",
+      "type": "splunk.singlevalue",
       "title": "GPU Count",
       "dataSources": {
         "primary": "ds_s06"
@@ -130,7 +130,7 @@
       }
     },
     "viz_s07": {
-      "type": "splunk.single",
+      "type": "splunk.singlevalue",
       "title": "VRAM Usage %",
       "dataSources": {
         "primary": "ds_s07"
@@ -162,7 +162,7 @@
       }
     },
     "viz_s08": {
-      "type": "splunk.single",
+      "type": "splunk.singlevalue",
       "title": "Used VRAM",
       "dataSources": {
         "primary": "ds_s08"
@@ -176,7 +176,7 @@
       }
     },
     "viz_s09": {
-      "type": "splunk.single",
+      "type": "splunk.singlevalue",
       "title": "Free VRAM",
       "dataSources": {
         "primary": "ds_s09"
@@ -190,7 +190,7 @@
       }
     },
     "viz_s10": {
-      "type": "splunk.single",
+      "type": "splunk.singlevalue",
       "title": "Total VRAM",
       "dataSources": {
         "primary": "ds_s10"
@@ -204,7 +204,7 @@
       }
     },
     "viz_s11": {
-      "type": "splunk.single",
+      "type": "splunk.singlevalue",
       "title": "GPU Utilization",
       "dataSources": {
         "primary": "ds_s11"
@@ -236,7 +236,7 @@
       }
     },
     "viz_s12": {
-      "type": "splunk.single",
+      "type": "splunk.singlevalue",
       "title": "GPU Temperature",
       "dataSources": {
         "primary": "ds_s12"
@@ -245,7 +245,7 @@
         "backgroundColor": "#0b1f35",
         "sparklineDisplay": "off",
         "trendDisplay": "off",
-        "unit": "°C",
+        "unit": "\u00b0C",
         "unitPosition": "after",
         "majorColor": "> majorValue | rangeValue(rangeColorConfig)"
       },
@@ -268,7 +268,7 @@
       }
     },
     "viz_s13": {
-      "type": "splunk.single",
+      "type": "splunk.singlevalue",
       "title": "Power Draw",
       "dataSources": {
         "primary": "ds_s13"
@@ -284,14 +284,14 @@
     "viz_h3": {
       "type": "splunk.markdown",
       "options": {
-        "markdown": "### ◈  GPU METRICS — HISTORY",
+        "markdown": "### \u25c8  GPU METRICS \u2014 HISTORY",
         "backgroundColor": "#050e1a",
         "fontColor": "#00b4d8"
       }
     },
     "viz_c01": {
       "type": "splunk.line",
-      "title": "GPU Utilization (%) — Over Time",
+      "title": "GPU Utilization (%) \u2014 Over Time",
       "dataSources": {
         "primary": "ds_c01"
       },
@@ -309,7 +309,7 @@
     },
     "viz_c02": {
       "type": "splunk.line",
-      "title": "GPU Temperature (°C) — Over Time",
+      "title": "GPU Temperature (\u00b0C) \u2014 Over Time",
       "dataSources": {
         "primary": "ds_c02"
       },
@@ -326,7 +326,7 @@
     },
     "viz_c03": {
       "type": "splunk.area",
-      "title": "VRAM Usage (GB) — Over Time",
+      "title": "VRAM Usage (GB) \u2014 Over Time",
       "dataSources": {
         "primary": "ds_c03"
       },
@@ -343,7 +343,7 @@
     },
     "viz_c04": {
       "type": "splunk.area",
-      "title": "GPU Power Draw (W) — Over Time",
+      "title": "GPU Power Draw (W) \u2014 Over Time",
       "dataSources": {
         "primary": "ds_c04"
       },
@@ -361,13 +361,13 @@
     "viz_h4": {
       "type": "splunk.markdown",
       "options": {
-        "markdown": "### ◈  PER-MODEL GPU METRICS",
+        "markdown": "### \u25c8  PER-MODEL GPU METRICS",
         "backgroundColor": "#050e1a",
         "fontColor": "#00b4d8"
       }
     },
     "viz_c05": {
-      "type": "splunk.column",
+      "type": "splunk.bar",
       "title": "VRAM Usage by Running Model (GB)",
       "dataSources": {
         "primary": "ds_c05"
@@ -384,7 +384,7 @@
     },
     "viz_c06": {
       "type": "splunk.area",
-      "title": "VRAM Usage % — Over Time",
+      "title": "VRAM Usage % \u2014 Over Time",
       "dataSources": {
         "primary": "ds_c06"
       },
@@ -401,7 +401,7 @@
     "viz_h5": {
       "type": "splunk.markdown",
       "options": {
-        "markdown": "### ◈  DETAIL TABLES",
+        "markdown": "### \u25c8  DETAIL TABLES",
         "backgroundColor": "#050e1a",
         "fontColor": "#00b4d8"
       }
@@ -416,12 +416,12 @@
         "backgroundColor": "#0b1f35",
         "count": 10,
         "rowNumbers": false,
-        "headerVisibility": "show"
+        "headerVisibility": "fixed"
       }
     },
     "viz_t02": {
       "type": "splunk.table",
-      "title": "Running Models — VRAM + RAM Offload",
+      "title": "Running Models \u2014 VRAM + RAM Offload",
       "dataSources": {
         "primary": "ds_t02"
       },
@@ -429,7 +429,7 @@
         "backgroundColor": "#0b1f35",
         "count": 10,
         "rowNumbers": false,
-        "headerVisibility": "show"
+        "headerVisibility": "fixed"
       }
     },
     "viz_t03": {
@@ -442,7 +442,7 @@
         "backgroundColor": "#0b1f35",
         "count": 20,
         "rowNumbers": true,
-        "headerVisibility": "show"
+        "headerVisibility": "fixed"
       }
     }
   },
@@ -650,7 +650,7 @@
     "ds_t02": {
       "type": "ds.search",
       "options": {
-        "query": "index=llm_monitor metric_type=ollama | head 1 | spath output=rm path=\"running_models{}\" | mvexpand rm | spath input=rm | eval ram_offload=if(offloaded_to_ram=\"true\" OR offloaded_to_ram=\"True\",\"YES  \".size_ram_gb.\" GB\",\"—\") | table name, size_vram_gb, size_ram_gb, size_total_gb, ram_offload, expires_at | rename name AS Model, size_vram_gb AS \"VRAM (GB)\", size_ram_gb AS \"RAM (GB)\", size_total_gb AS \"Total (GB)\", ram_offload AS \"RAM Offload\", expires_at AS \"Expires At\"",
+        "query": "index=llm_monitor metric_type=ollama | head 1 | spath output=rm path=\"running_models{}\" | mvexpand rm | spath input=rm | eval ram_offload=if(offloaded_to_ram=\"true\" OR offloaded_to_ram=\"True\",\"YES  \".size_ram_gb.\" GB\",\"\u2014\") | table name, size_vram_gb, size_ram_gb, size_total_gb, ram_offload, expires_at | rename name AS Model, size_vram_gb AS \"VRAM (GB)\", size_ram_gb AS \"RAM (GB)\", size_total_gb AS \"Total (GB)\", ram_offload AS \"RAM Offload\", expires_at AS \"Expires At\"",
         "queryParameters": {
           "earliest": "-5m",
           "latest": "now"
