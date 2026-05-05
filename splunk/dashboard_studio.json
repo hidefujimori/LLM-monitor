@@ -1,0 +1,952 @@
+{
+  "title": "LLM Monitor - Ollama & GPU Dashboard",
+  "description": "Real-time monitoring of Ollama LLM server and GPU resources",
+  "defaults": {
+    "dataSources": {
+      "ds.search": {
+        "options": {
+          "queryParameters": {
+            "latest": "now"
+          }
+        }
+      }
+    },
+    "visualizations": {
+      "global": {
+        "showProgressBar": false,
+        "showLastUpdated": false
+      }
+    }
+  },
+  "inputs": {},
+  "visualizations": {
+    "viz_h1": {
+      "type": "splunk.markdown",
+      "options": {
+        "markdown": "### ◈  OLLAMA STATUS",
+        "backgroundColor": "#050e1a",
+        "fontColor": "#00b4d8"
+      }
+    },
+    "viz_s01": {
+      "type": "splunk.single",
+      "title": "Status",
+      "dataSources": {
+        "primary": "ds_s01"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "sparklineDisplay": "off",
+        "trendDisplay": "off",
+        "majorFontSize": 28,
+        "majorColor": "#53a051"
+      }
+    },
+    "viz_s02": {
+      "type": "splunk.single",
+      "title": "Ollama Version",
+      "dataSources": {
+        "primary": "ds_s02"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "sparklineDisplay": "off",
+        "trendDisplay": "off"
+      }
+    },
+    "viz_s03": {
+      "type": "splunk.single",
+      "title": "Installed Models",
+      "dataSources": {
+        "primary": "ds_s03"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "sparklineDisplay": "off",
+        "trendDisplay": "off",
+        "unit": "models",
+        "unitPosition": "after"
+      }
+    },
+    "viz_s04": {
+      "type": "splunk.single",
+      "title": "Running Models",
+      "dataSources": {
+        "primary": "ds_s04"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "sparklineDisplay": "off",
+        "trendDisplay": "off",
+        "unit": "models",
+        "unitPosition": "after",
+        "majorColor": "> majorValue | rangeValue(rangeColorConfig)"
+      },
+      "context": {
+        "rangeColorConfig": [
+          {
+            "to": 1,
+            "value": "#888888"
+          },
+          {
+            "from": 1,
+            "value": "#53a051"
+          }
+        ]
+      }
+    },
+    "viz_s05": {
+      "type": "splunk.single",
+      "title": "RAM Offload Active",
+      "dataSources": {
+        "primary": "ds_s05"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "sparklineDisplay": "off",
+        "trendDisplay": "off"
+      }
+    },
+    "viz_h2": {
+      "type": "splunk.markdown",
+      "options": {
+        "markdown": "### ◈  GPU OVERVIEW",
+        "backgroundColor": "#050e1a",
+        "fontColor": "#00b4d8"
+      }
+    },
+    "viz_s06": {
+      "type": "splunk.single",
+      "title": "GPU Count",
+      "dataSources": {
+        "primary": "ds_s06"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "sparklineDisplay": "off",
+        "trendDisplay": "off",
+        "unit": "GPUs",
+        "unitPosition": "after"
+      }
+    },
+    "viz_s07": {
+      "type": "splunk.single",
+      "title": "VRAM Usage %",
+      "dataSources": {
+        "primary": "ds_s07"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "sparklineDisplay": "off",
+        "trendDisplay": "off",
+        "unit": "%",
+        "unitPosition": "after",
+        "majorColor": "> majorValue | rangeValue(rangeColorConfig)"
+      },
+      "context": {
+        "rangeColorConfig": [
+          {
+            "to": 81,
+            "value": "#53a051"
+          },
+          {
+            "from": 81,
+            "to": 100,
+            "value": "#f8be34"
+          },
+          {
+            "from": 100,
+            "value": "#dc4e41"
+          }
+        ]
+      }
+    },
+    "viz_s08": {
+      "type": "splunk.single",
+      "title": "Used VRAM",
+      "dataSources": {
+        "primary": "ds_s08"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "sparklineDisplay": "off",
+        "trendDisplay": "off",
+        "unit": "GB",
+        "unitPosition": "after"
+      }
+    },
+    "viz_s09": {
+      "type": "splunk.single",
+      "title": "Free VRAM",
+      "dataSources": {
+        "primary": "ds_s09"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "sparklineDisplay": "off",
+        "trendDisplay": "off",
+        "unit": "GB",
+        "unitPosition": "after"
+      }
+    },
+    "viz_s10": {
+      "type": "splunk.single",
+      "title": "Total VRAM",
+      "dataSources": {
+        "primary": "ds_s10"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "sparklineDisplay": "off",
+        "trendDisplay": "off",
+        "unit": "GB",
+        "unitPosition": "after"
+      }
+    },
+    "viz_s11": {
+      "type": "splunk.single",
+      "title": "GPU Utilization",
+      "dataSources": {
+        "primary": "ds_s11"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "sparklineDisplay": "off",
+        "trendDisplay": "off",
+        "unit": "%",
+        "unitPosition": "after",
+        "majorColor": "> majorValue | rangeValue(rangeColorConfig)"
+      },
+      "context": {
+        "rangeColorConfig": [
+          {
+            "to": 50,
+            "value": "#53a051"
+          },
+          {
+            "from": 50,
+            "to": 90,
+            "value": "#f8be34"
+          },
+          {
+            "from": 90,
+            "value": "#dc4e41"
+          }
+        ]
+      }
+    },
+    "viz_s12": {
+      "type": "splunk.single",
+      "title": "GPU Temperature",
+      "dataSources": {
+        "primary": "ds_s12"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "sparklineDisplay": "off",
+        "trendDisplay": "off",
+        "unit": "°C",
+        "unitPosition": "after",
+        "majorColor": "> majorValue | rangeValue(rangeColorConfig)"
+      },
+      "context": {
+        "rangeColorConfig": [
+          {
+            "to": 70,
+            "value": "#53a051"
+          },
+          {
+            "from": 70,
+            "to": 85,
+            "value": "#f8be34"
+          },
+          {
+            "from": 85,
+            "value": "#dc4e41"
+          }
+        ]
+      }
+    },
+    "viz_s13": {
+      "type": "splunk.single",
+      "title": "Power Draw",
+      "dataSources": {
+        "primary": "ds_s13"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "sparklineDisplay": "off",
+        "trendDisplay": "off",
+        "unit": "W",
+        "unitPosition": "after"
+      }
+    },
+    "viz_h3": {
+      "type": "splunk.markdown",
+      "options": {
+        "markdown": "### ◈  GPU METRICS — HISTORY",
+        "backgroundColor": "#050e1a",
+        "fontColor": "#00b4d8"
+      }
+    },
+    "viz_c01": {
+      "type": "splunk.line",
+      "title": "GPU Utilization (%) — Over Time",
+      "dataSources": {
+        "primary": "ds_c01"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "seriesColors": [
+          "#00b4d8",
+          "#f8be34",
+          "#53a051"
+        ],
+        "xAxisVisibility": "hide",
+        "legendDisplay": "bottom",
+        "nullValueDisplay": "connect"
+      }
+    },
+    "viz_c02": {
+      "type": "splunk.line",
+      "title": "GPU Temperature (°C) — Over Time",
+      "dataSources": {
+        "primary": "ds_c02"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "seriesColors": [
+          "#f8be34",
+          "#dc4e41"
+        ],
+        "xAxisVisibility": "hide",
+        "legendDisplay": "bottom",
+        "nullValueDisplay": "connect"
+      }
+    },
+    "viz_c03": {
+      "type": "splunk.area",
+      "title": "VRAM Usage (GB) — Over Time",
+      "dataSources": {
+        "primary": "ds_c03"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "seriesColors": [
+          "#0096c7",
+          "#1a4a6e"
+        ],
+        "xAxisVisibility": "hide",
+        "legendDisplay": "bottom",
+        "nullValueDisplay": "connect"
+      }
+    },
+    "viz_c04": {
+      "type": "splunk.area",
+      "title": "GPU Power Draw (W) — Over Time",
+      "dataSources": {
+        "primary": "ds_c04"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "seriesColors": [
+          "#f8be34",
+          "#dc4e41"
+        ],
+        "xAxisVisibility": "hide",
+        "legendDisplay": "bottom",
+        "nullValueDisplay": "connect"
+      }
+    },
+    "viz_h4": {
+      "type": "splunk.markdown",
+      "options": {
+        "markdown": "### ◈  PER-MODEL GPU METRICS",
+        "backgroundColor": "#050e1a",
+        "fontColor": "#00b4d8"
+      }
+    },
+    "viz_c05": {
+      "type": "splunk.column",
+      "title": "VRAM Usage by Running Model (GB)",
+      "dataSources": {
+        "primary": "ds_c05"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "seriesColors": [
+          "#0096c7",
+          "#f8be34"
+        ],
+        "stackMode": "stacked",
+        "legendDisplay": "bottom"
+      }
+    },
+    "viz_c06": {
+      "type": "splunk.area",
+      "title": "VRAM Usage % — Over Time",
+      "dataSources": {
+        "primary": "ds_c06"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "seriesColors": [
+          "#53a051"
+        ],
+        "xAxisVisibility": "hide",
+        "legendDisplay": "bottom",
+        "nullValueDisplay": "connect"
+      }
+    },
+    "viz_h5": {
+      "type": "splunk.markdown",
+      "options": {
+        "markdown": "### ◈  DETAIL TABLES",
+        "backgroundColor": "#050e1a",
+        "fontColor": "#00b4d8"
+      }
+    },
+    "viz_t01": {
+      "type": "splunk.table",
+      "title": "Current GPU Status",
+      "dataSources": {
+        "primary": "ds_t01"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "count": 10,
+        "rowNumbers": false,
+        "headerVisibility": "show"
+      }
+    },
+    "viz_t02": {
+      "type": "splunk.table",
+      "title": "Running Models — VRAM + RAM Offload",
+      "dataSources": {
+        "primary": "ds_t02"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "count": 10,
+        "rowNumbers": false,
+        "headerVisibility": "show"
+      }
+    },
+    "viz_t03": {
+      "type": "splunk.table",
+      "title": "Installed Models",
+      "dataSources": {
+        "primary": "ds_t03"
+      },
+      "options": {
+        "backgroundColor": "#0b1f35",
+        "count": 20,
+        "rowNumbers": true,
+        "headerVisibility": "show"
+      }
+    }
+  },
+  "dataSources": {
+    "ds_s01": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=ollama | head 1 | eval v=upper(status) | table v",
+        "queryParameters": {
+          "earliest": "-5m",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_s02": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=ollama | head 1 | table version",
+        "queryParameters": {
+          "earliest": "-5m",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_s03": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=ollama | head 1 | table model_count",
+        "queryParameters": {
+          "earliest": "-5m",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_s04": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=ollama | head 1 | table running_model_count",
+        "queryParameters": {
+          "earliest": "-5m",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_s05": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=ollama | head 1 | eval v=if(any_offloaded_to_ram=\"True\",\"YES\",\"NO\") | table v",
+        "queryParameters": {
+          "earliest": "-5m",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_s06": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=gpu | head 1 | table gpu_count",
+        "queryParameters": {
+          "earliest": "-5m",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_s07": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=gpu | head 1 | eval v=round(used_vram_mb/total_vram_mb*100,1) | table v",
+        "queryParameters": {
+          "earliest": "-5m",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_s08": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=gpu | head 1 | eval v=round(used_vram_mb/1024,1) | table v",
+        "queryParameters": {
+          "earliest": "-5m",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_s09": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=gpu | head 1 | eval v=round(free_vram_mb/1024,1) | table v",
+        "queryParameters": {
+          "earliest": "-5m",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_s10": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=gpu | head 1 | eval v=round(total_vram_mb/1024,1) | table v",
+        "queryParameters": {
+          "earliest": "-5m",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_s11": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=gpu | head 1 | spath output=g path=\"gpus{}\" | mvexpand g | spath input=g | stats avg(gpu_utilization_pct) as v | eval v=round(v,1) | table v",
+        "queryParameters": {
+          "earliest": "-5m",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_s12": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=gpu | head 1 | spath output=g path=\"gpus{}\" | mvexpand g | spath input=g | stats avg(temperature_c) as v | eval v=round(v,1) | table v",
+        "queryParameters": {
+          "earliest": "-5m",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_s13": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=gpu | head 1 | spath output=g path=\"gpus{}\" | mvexpand g | spath input=g | stats avg(power_draw_w) as v | eval v=round(v,1) | table v",
+        "queryParameters": {
+          "earliest": "-5m",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_c01": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=gpu | spath output=g path=\"gpus{}\" | mvexpand g | spath input=g | timechart avg(gpu_utilization_pct) by name span=1m",
+        "queryParameters": {
+          "earliest": "-1h",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_c02": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=gpu | spath output=g path=\"gpus{}\" | mvexpand g | spath input=g | timechart avg(temperature_c) by name span=1m",
+        "queryParameters": {
+          "earliest": "-1h",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_c03": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=gpu | eval used=round(used_vram_mb/1024,2) | eval total=round(total_vram_mb/1024,2) | timechart avg(used) as \"Used VRAM (GB)\", avg(total) as \"Total VRAM (GB)\" span=1m",
+        "queryParameters": {
+          "earliest": "-1h",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_c04": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=gpu | spath output=g path=\"gpus{}\" | mvexpand g | spath input=g | timechart avg(power_draw_w) by name span=1m",
+        "queryParameters": {
+          "earliest": "-1h",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_c05": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=ollama running_model_count>0 | head 20 | spath output=rm path=\"running_models{}\" | mvexpand rm | spath input=rm | chart avg(size_vram_gb) as \"VRAM (GB)\", avg(size_ram_gb) as \"RAM Offload (GB)\" by name",
+        "queryParameters": {
+          "earliest": "-5m",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_c06": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=gpu | eval vram_pct=round(used_vram_mb/total_vram_mb*100,1) | timechart avg(vram_pct) as \"VRAM Usage (%)\" span=1m",
+        "queryParameters": {
+          "earliest": "-1h",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_t01": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=gpu | head 1 | spath output=g path=\"gpus{}\" | mvexpand g | spath input=g | eval vram_label=memory_used_mb.\" / \".memory_total_mb.\" MB (\".round(memory_used_mb/memory_total_mb*100,1).\"%)\" | table name, vendor, temperature_c, gpu_utilization_pct, vram_label, power_draw_w, clock_graphics_mhz, performance_state | rename name AS \"GPU\", vendor AS Vendor, temperature_c AS \"Temp C\", gpu_utilization_pct AS \"Util %\", vram_label AS \"VRAM Used\", power_draw_w AS \"Power W\", clock_graphics_mhz AS \"Clock MHz\", performance_state AS \"P-State\"",
+        "queryParameters": {
+          "earliest": "-5m",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_t02": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=ollama | head 1 | spath output=rm path=\"running_models{}\" | mvexpand rm | spath input=rm | eval ram_offload=if(offloaded_to_ram=\"true\" OR offloaded_to_ram=\"True\",\"YES  \".size_ram_gb.\" GB\",\"—\") | table name, size_vram_gb, size_ram_gb, size_total_gb, ram_offload, expires_at | rename name AS Model, size_vram_gb AS \"VRAM (GB)\", size_ram_gb AS \"RAM (GB)\", size_total_gb AS \"Total (GB)\", ram_offload AS \"RAM Offload\", expires_at AS \"Expires At\"",
+        "queryParameters": {
+          "earliest": "-5m",
+          "latest": "now"
+        }
+      }
+    },
+    "ds_t03": {
+      "type": "ds.search",
+      "options": {
+        "query": "index=llm_monitor metric_type=ollama | head 1 | spath output=m path=\"models{}\" | mvexpand m | spath input=m | table name, family, parameter_size, quantization, size_gb, modified_at | rename name AS Model, family AS Family, parameter_size AS Parameters, quantization AS Quantization, size_gb AS \"Size (GB)\", modified_at AS \"Last Modified\"",
+        "queryParameters": {
+          "earliest": "-5m",
+          "latest": "now"
+        }
+      }
+    }
+  },
+  "layout": {
+    "type": "absolute",
+    "options": {
+      "display": "auto-scale",
+      "backgroundColor": "#060f1e",
+      "height": 1800
+    },
+    "structure": [
+      {
+        "item": "viz_h1",
+        "type": "block",
+        "position": {
+          "x": 10,
+          "y": 0,
+          "w": 1420,
+          "h": 32
+        }
+      },
+      {
+        "item": "viz_s01",
+        "type": "block",
+        "position": {
+          "x": 10,
+          "y": 42,
+          "w": 276,
+          "h": 90
+        }
+      },
+      {
+        "item": "viz_s02",
+        "type": "block",
+        "position": {
+          "x": 296,
+          "y": 42,
+          "w": 276,
+          "h": 90
+        }
+      },
+      {
+        "item": "viz_s03",
+        "type": "block",
+        "position": {
+          "x": 582,
+          "y": 42,
+          "w": 276,
+          "h": 90
+        }
+      },
+      {
+        "item": "viz_s04",
+        "type": "block",
+        "position": {
+          "x": 868,
+          "y": 42,
+          "w": 276,
+          "h": 90
+        }
+      },
+      {
+        "item": "viz_s05",
+        "type": "block",
+        "position": {
+          "x": 1154,
+          "y": 42,
+          "w": 276,
+          "h": 90
+        }
+      },
+      {
+        "item": "viz_h2",
+        "type": "block",
+        "position": {
+          "x": 10,
+          "y": 142,
+          "w": 1420,
+          "h": 32
+        }
+      },
+      {
+        "item": "viz_s06",
+        "type": "block",
+        "position": {
+          "x": 10,
+          "y": 184,
+          "w": 168,
+          "h": 90
+        }
+      },
+      {
+        "item": "viz_s07",
+        "type": "block",
+        "position": {
+          "x": 188,
+          "y": 184,
+          "w": 168,
+          "h": 90
+        }
+      },
+      {
+        "item": "viz_s08",
+        "type": "block",
+        "position": {
+          "x": 366,
+          "y": 184,
+          "w": 168,
+          "h": 90
+        }
+      },
+      {
+        "item": "viz_s09",
+        "type": "block",
+        "position": {
+          "x": 544,
+          "y": 184,
+          "w": 168,
+          "h": 90
+        }
+      },
+      {
+        "item": "viz_s10",
+        "type": "block",
+        "position": {
+          "x": 722,
+          "y": 184,
+          "w": 168,
+          "h": 90
+        }
+      },
+      {
+        "item": "viz_s11",
+        "type": "block",
+        "position": {
+          "x": 900,
+          "y": 184,
+          "w": 168,
+          "h": 90
+        }
+      },
+      {
+        "item": "viz_s12",
+        "type": "block",
+        "position": {
+          "x": 1078,
+          "y": 184,
+          "w": 168,
+          "h": 90
+        }
+      },
+      {
+        "item": "viz_s13",
+        "type": "block",
+        "position": {
+          "x": 1256,
+          "y": 184,
+          "w": 174,
+          "h": 90
+        }
+      },
+      {
+        "item": "viz_h3",
+        "type": "block",
+        "position": {
+          "x": 10,
+          "y": 284,
+          "w": 1420,
+          "h": 32
+        }
+      },
+      {
+        "item": "viz_c01",
+        "type": "block",
+        "position": {
+          "x": 10,
+          "y": 326,
+          "w": 705,
+          "h": 250
+        }
+      },
+      {
+        "item": "viz_c02",
+        "type": "block",
+        "position": {
+          "x": 725,
+          "y": 326,
+          "w": 705,
+          "h": 250
+        }
+      },
+      {
+        "item": "viz_c03",
+        "type": "block",
+        "position": {
+          "x": 10,
+          "y": 586,
+          "w": 705,
+          "h": 250
+        }
+      },
+      {
+        "item": "viz_c04",
+        "type": "block",
+        "position": {
+          "x": 725,
+          "y": 586,
+          "w": 705,
+          "h": 250
+        }
+      },
+      {
+        "item": "viz_h4",
+        "type": "block",
+        "position": {
+          "x": 10,
+          "y": 846,
+          "w": 1420,
+          "h": 32
+        }
+      },
+      {
+        "item": "viz_c05",
+        "type": "block",
+        "position": {
+          "x": 10,
+          "y": 888,
+          "w": 705,
+          "h": 250
+        }
+      },
+      {
+        "item": "viz_c06",
+        "type": "block",
+        "position": {
+          "x": 725,
+          "y": 888,
+          "w": 705,
+          "h": 250
+        }
+      },
+      {
+        "item": "viz_h5",
+        "type": "block",
+        "position": {
+          "x": 10,
+          "y": 1148,
+          "w": 1420,
+          "h": 32
+        }
+      },
+      {
+        "item": "viz_t01",
+        "type": "block",
+        "position": {
+          "x": 10,
+          "y": 1190,
+          "w": 1420,
+          "h": 160
+        }
+      },
+      {
+        "item": "viz_t02",
+        "type": "block",
+        "position": {
+          "x": 10,
+          "y": 1360,
+          "w": 1420,
+          "h": 160
+        }
+      },
+      {
+        "item": "viz_t03",
+        "type": "block",
+        "position": {
+          "x": 10,
+          "y": 1530,
+          "w": 1420,
+          "h": 260
+        }
+      }
+    ],
+    "globalInputs": []
+  }
+}
