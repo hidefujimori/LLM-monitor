@@ -2,115 +2,8 @@
   <label>LLM Monitor - Ollama &amp; GPU Dashboard</label>
   <description>Real-time monitoring of Ollama LLM server and GPU resources</description>
 
-  <!-- ═══════════════════════════════════════════════════════════════════
-       CSS INJECTION — Tech / Dark Navy style
-       ══════════════════════════════════════════════════════════════════ -->
-  <row>
-    <panel>
-      <html>
-        <![CDATA[
-        <style>
-          /* --- Global background ------------------------------------ */
-          body,
-          .dashboard-body,
-          .fieldset,
-          .dashboard-view-controls,
-          .edit-dashboard-btn-group { background: #060f1e !important; }
-
-          /* --- Dashboard title -------------------------------------- */
-          .dashboard-title {
-            color: #00e5ff !important;
-            font-size: 22px !important;
-            font-weight: 700 !important;
-            letter-spacing: 2px !important;
-            text-shadow: 0 0 18px rgba(0,229,255,0.7) !important;
-          }
-          .dashboard-description { color: #48cae4 !important; }
-
-          /* --- Panel body ------------------------------------------ */
-          .dashboard-cell .panel-body {
-            background: #0b1f35 !important;
-            border: 1px solid #1a4a6e !important;
-            border-radius: 6px !important;
-            box-shadow: 0 0 16px rgba(0,180,216,0.18),
-                        inset 0 1px 0 rgba(0,229,255,0.06) !important;
-          }
-          /* --- Panel title header ---------------------------------- */
-          .panel-head {
-            background: #081526 !important;
-            border-bottom: 1px solid #1a4a6e !important;
-            border-radius: 6px 6px 0 0 !important;
-          }
-          .panel-head h3 {
-            color: #48cae4 !important;
-            font-size: 10px !important;
-            font-weight: 700 !important;
-            letter-spacing: 2px !important;
-            text-transform: uppercase !important;
-          }
-
-          /* --- Single value ---------------------------------------- */
-          .single-result {
-            color: #00e5ff !important;
-            text-shadow: 0 0 12px rgba(0,229,255,0.55) !important;
-          }
-          .single-unit, .single-label { color: #90e0ef !important; }
-
-          /* --- Tables ---------------------------------------------- */
-          .table-chrome thead th,
-          .table-chrome th {
-            background: #081526 !important;
-            color: #48cae4 !important;
-            border-bottom: 1px solid #1a4a6e !important;
-            font-size: 10px !important;
-            letter-spacing: 1.5px !important;
-            text-transform: uppercase !important;
-          }
-          .table-chrome tbody td { color: #caf0f8 !important; border-color: #122a42 !important; }
-          .table-chrome tbody tr:nth-child(odd)  { background: rgba(0,180,216,0.04) !important; }
-          .table-chrome tbody tr:hover           { background: rgba(0,229,255,0.09) !important; }
-
-          /* --- Chart internals ------------------------------------- */
-          .highcharts-background { fill: #0b1f35 !important; }
-          .highcharts-grid-line  { stroke: #1a4a6e !important; opacity:0.6 !important; }
-          .highcharts-axis-labels text,
-          .highcharts-axis text  { fill: #90e0ef !important; }
-          .highcharts-legend-item text { fill: #caf0f8 !important; }
-          .highcharts-title { fill: #00e5ff !important; }
-
-          /* --- Section header ---------------------------------- */
-          .llm-section {
-            padding: 4px 12px;
-            background: linear-gradient(90deg, #0d2a40 0%, transparent 100%);
-            border-left: 3px solid #00b4d8;
-            color: #48cae4;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            margin: 0;
-            line-height: 28px;
-          }
-
-          /* --- Offload warning row ----------------------------- */
-          .offload-yes { color: #f8be34 !important; font-weight:700; }
-          .offload-no  { color: #53a051 !important; }
-        </style>
-        ]]>
-      </html>
-    </panel>
-  </row>
-
-  <!-- ═══════════════════════════════════════════════════════════════════
-       SECTION 1 ▸ OLLAMA STATUS
-       ══════════════════════════════════════════════════════════════════ -->
-  <row>
-    <panel>
-      <html><![CDATA[<div class="llm-section">▸ OLLAMA STATUS</div>]]></html>
-    </panel>
-  </row>
-
-  <row>
+  <!-- ▸ OLLAMA STATUS ──────────────────────────────────────────────── -->
+  <row groupLabel="OLLAMA STATUS">
     <panel>
       <title>Status</title>
       <single>
@@ -126,7 +19,7 @@
       </single>
     </panel>
     <panel>
-      <title>Version</title>
+      <title>Ollama Version</title>
       <single>
         <search>
           <query>index=llm_monitor metric_type=ollama | head 1 | table version</query>
@@ -177,16 +70,8 @@
     </panel>
   </row>
 
-  <!-- ═══════════════════════════════════════════════════════════════════
-       SECTION 2 ▸ GPU OVERVIEW
-       ══════════════════════════════════════════════════════════════════ -->
-  <row>
-    <panel>
-      <html><![CDATA[<div class="llm-section">▸ GPU OVERVIEW</div>]]></html>
-    </panel>
-  </row>
-
-  <row>
+  <!-- ▸ GPU OVERVIEW ───────────────────────────────────────────────── -->
+  <row groupLabel="GPU OVERVIEW">
     <panel>
       <title>GPU Count</title>
       <single>
@@ -289,16 +174,8 @@
     </panel>
   </row>
 
-  <!-- ═══════════════════════════════════════════════════════════════════
-       SECTION 3 ▸ GPU TIME-SERIES CHARTS
-       ══════════════════════════════════════════════════════════════════ -->
-  <row>
-    <panel>
-      <html><![CDATA[<div class="llm-section">▸ GPU METRICS — HISTORY</div>]]></html>
-    </panel>
-  </row>
-
-  <row>
+  <!-- ▸ GPU TIME-SERIES ────────────────────────────────────────────── -->
+  <row groupLabel="GPU METRICS — HISTORY">
     <panel>
       <title>GPU Utilization (%) — Over Time</title>
       <chart>
@@ -309,7 +186,6 @@
         <option name="charting.chart">line</option>
         <option name="charting.chart.nullValueMode">connect</option>
         <option name="charting.seriesColors">["0x00b4d8","0xf8be34","0x53a051"]</option>
-        <option name="charting.axisTitleX.text">Time</option>
         <option name="charting.axisTitleY.text">Utilization (%)</option>
         <option name="charting.axisY.maximumNumber">100</option>
         <option name="charting.axisY.minimumNumber">0</option>
@@ -328,7 +204,6 @@
         <option name="charting.chart">line</option>
         <option name="charting.chart.nullValueMode">connect</option>
         <option name="charting.seriesColors">["0xf8be34","0xdc4e41","0x00b4d8"]</option>
-        <option name="charting.axisTitleX.text">Time</option>
         <option name="charting.axisTitleY.text">Temperature (°C)</option>
         <option name="charting.legend.placement">bottom</option>
         <option name="charting.chart.style">shiny</option>
@@ -372,16 +247,8 @@
     </panel>
   </row>
 
-  <!-- ═══════════════════════════════════════════════════════════════════
-       SECTION 4 ▸ PER-MODEL GPU METRICS
-       ══════════════════════════════════════════════════════════════════ -->
-  <row>
-    <panel>
-      <html><![CDATA[<div class="llm-section">▸ PER-MODEL GPU METRICS</div>]]></html>
-    </panel>
-  </row>
-
-  <row>
+  <!-- ▸ PER-MODEL GPU METRICS ─────────────────────────────────────── -->
+  <row groupLabel="PER-MODEL GPU METRICS">
     <panel>
       <title>VRAM Usage by Running Model (GB)</title>
       <chart>
@@ -418,16 +285,8 @@
     </panel>
   </row>
 
-  <!-- ═══════════════════════════════════════════════════════════════════
-       SECTION 5 ▸ DETAIL TABLES
-       ══════════════════════════════════════════════════════════════════ -->
-  <row>
-    <panel>
-      <html><![CDATA[<div class="llm-section">▸ DETAIL TABLES</div>]]></html>
-    </panel>
-  </row>
-
-  <row>
+  <!-- ▸ DETAIL TABLES ──────────────────────────────────────────────── -->
+  <row groupLabel="DETAIL TABLES">
     <panel>
       <title>Current GPU Status</title>
       <table>
@@ -446,7 +305,7 @@
       <title>Running Models — VRAM + RAM Offload</title>
       <table>
         <search>
-          <query>index=llm_monitor metric_type=ollama | head 1 | spath output=rm path="running_models{}" | mvexpand rm | spath input=rm | eval ram_offload=if(offloaded_to_ram="true" OR offloaded_to_ram="True", "YES  "+size_ram_gb+" GB", "—") | table name, size_vram_gb, size_ram_gb, size_total_gb, ram_offload, expires_at | rename name AS Model, size_vram_gb AS "VRAM (GB)", size_ram_gb AS "RAM (GB)", size_total_gb AS "Total (GB)", ram_offload AS "RAM Offload", expires_at AS "Expires At"</query>
+          <query>index=llm_monitor metric_type=ollama | head 1 | spath output=rm path="running_models{}" | mvexpand rm | spath input=rm | eval ram_offload=if(offloaded_to_ram="true" OR offloaded_to_ram="True","YES  "+size_ram_gb+" GB","—") | table name, size_vram_gb, size_ram_gb, size_total_gb, ram_offload, expires_at | rename name AS Model, size_vram_gb AS "VRAM (GB)", size_ram_gb AS "RAM (GB)", size_total_gb AS "Total (GB)", ram_offload AS "RAM Offload", expires_at AS "Expires At"</query>
           <earliest>-5m</earliest><latest>now</latest>
         </search>
         <option name="wrap">true</option>
