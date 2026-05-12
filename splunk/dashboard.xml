@@ -58,7 +58,7 @@
       <title>RAM Offload Active</title>
       <single>
         <search>
-          <query>index=llm_monitor metric_type=ollama | head 1 | eval v=if(any_offloaded_to_ram="True","YES","NO") | table v</query>
+          <query>index=llm_monitor metric_type=ollama | head 1 | eval v=if(any_offloaded_to_ram="true","YES","NO") | table v</query>
           <earliest>-5m</earliest><latest>now</latest>
         </search>
         <option name="field">v</option>
